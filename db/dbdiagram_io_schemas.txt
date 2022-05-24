@@ -1,0 +1,75 @@
+// Creating tables
+Table users {
+  id int [pk, increment]
+  type int [ref: - userTypes.id]
+  fname varchar [not null]
+  lname varchar
+  created_at timestamp [default: `now()`]
+  mobile varchar
+  email email
+  password varchar [not null]
+  mobile_verified boolean [default: false]
+  email_verified boolean [default: false]
+}
+
+Table userTypes {
+  id int [pk, increment]
+  name varchar [not null]
+}
+
+Table groups {
+  id int [pk, increment]
+  name varchar [not null]
+  description varchar [default: null]
+  type int [ref: - groupTypes.id]
+}
+
+Table groupTypes {
+  id int [pk, increment]
+  name varchar [not null]
+}
+
+Table groupUserMappings {
+  id int [pk, increment]
+  group_id int [ref: - groups.id]
+  user_id int [ref: - users.id]
+}
+
+Table transactions {
+  id int [pk, increment]
+  created_at timestamp [default: `now()`]
+  updated_at timestamp [default: `now()`]
+  added_by int [ref: < users.id]
+  group_id int [ref: > groups.id]
+  amount int [default: 0]
+  paid_by int [ref: < users.id]
+  category_id int [ref: - categories.id]
+}
+
+Table categories {
+  id int [pk, increment]
+  name varchar [not null]
+  icon_url varchar [default: null]
+}
+
+Table budgets {
+  id int [pk, increment]
+  name varchar
+  group_id int [ref: - groups.id]
+  amount int [not null]
+  created_at timestamp [default: `now()`]
+  updated_at timestamp [default: `now()`]
+  created_by int [ref: - users.id]
+}
+
+Table notifications {
+  id int [pk, increment]
+}
+
+// Creating references
+// You can also define relaionship separately
+// > many-to-one; < one-to-many; - one-to-one
+// Ref: U.country_code > countries.code  
+// Ref: merchants.country_code > countries.code
+// Ref: order_items.product_id > products.id
+
