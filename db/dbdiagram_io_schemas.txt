@@ -6,7 +6,7 @@ Table users {
   lname varchar
   created_at timestamp [default: `now()`]
   mobile varchar
-  email email
+  email varchar
   password varchar [not null]
   mobile_verified boolean [default: false]
   email_verified boolean [default: false]
@@ -22,6 +22,7 @@ Table groups {
   name varchar [not null]
   description varchar [default: null]
   type int [ref: - groupTypes.id]
+  notify_users boolean [default: false]
 }
 
 Table groupTypes {
@@ -39,10 +40,11 @@ Table transactions {
   id int [pk, increment]
   created_at timestamp [default: `now()`]
   updated_at timestamp [default: `now()`]
-  added_by int [ref: < users.id]
+  added_by int [ref: > users.id]
   group_id int [ref: > groups.id]
   amount int [default: 0]
-  paid_by int [ref: < users.id]
+  description varchar [default: null]
+  paid_by int [ref: > users.id]
   category_id int [ref: - categories.id]
 }
 
@@ -60,10 +62,29 @@ Table budgets {
   created_at timestamp [default: `now()`]
   updated_at timestamp [default: `now()`]
   created_by int [ref: - users.id]
+  applicable_from timestamp [default: `now()`]
+  applicable_to timestamp [default: `now()`]
+}
+
+Table budgetCategoryWise {
+  id int [pk, increment]
+  budget_id int [ref: - budgets.id]
+  category_id int [ref: - categories.id]
+  amount int [not null]
 }
 
 Table notifications {
   id int [pk, increment]
+  created_at timestamp [default: `now()`]
+  description varchar [not null]
+  group_id int [ref: > groups.id]
+}
+
+Table notificationReadBy {
+  id int [pk, increment]
+  notification_id int [ref: - notifications.id]
+  read_at timestamp [default: `now()`]
+  read_by int [ref: - users.id]
 }
 
 // Creating references
